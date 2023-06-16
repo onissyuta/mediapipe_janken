@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>カメラでじゃんけん</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css">
+    <link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+    <div class="frame">
+        <main class="main">
+            <h1 class="title">カメラに手をかざして<br>じゃんけん！</h1>
+            <div class="canvas">
+                <div class="canvas__title">CPU</div>
+                <canvas class="canvas__body cpu" id="cpu-canvas" width="304" height="304"></canvas>
+            </div>
+            <div class="controllers">
+                <button class="controllers__button" id="start-game" >じゃんけんする [Space]</button>
+                <button class="controllers__button" id="start-gamex5" >じゃんけん5回勝負 [Enter]</button>    
+            </div>
+            </main>
+        <aside class="aside">
+            <div class="canvas">
+                <div class="canvas__title">Player</div>
+                <video id="video" hidden></video>
+                <canvas class="canvas__body player" id="canvas" width="672" height="504"></canvas>
+            </div>
+            <div class="result" id="result" ></div>
+        </aside>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+    <script src="src/script.js"></script>
+</body>
+</html>

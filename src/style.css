@@ -1,0 +1,96 @@
+:root {
+    --shadow: 6.7px 6.7px 5.3px rgba(0, 0, 0, 0.028), 22.3px 22.3px 17.9px rgba(0, 0, 0, 0.042), 100px 100px 80px rgba(0, 0, 0, 0.07)
+}
+
+body {
+    background: rgb(235 240 245);
+}
+
+@media screen and (max-width: 1280px) {
+    body {
+        transform: scale(0.9);
+    }
+}
+
+
+.title {
+    font-size: 2em;
+    text-align: center;
+}
+
+.frame {
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    gap: 8em;
+}
+
+.result {
+    height: 1em;
+    margin: .75em 0;
+    font-size: 3em;
+    line-height: 1;
+    font-weight: bold;
+    text-align: center;
+}
+
+.result[data-result="0"] {
+    color: orange;
+}
+
+.result[data-result="1"] {
+    color: red;
+}
+
+.result[data-result="2"] {
+    color: green;
+}
+
+.canvas {
+    margin: 2em 0;
+}
+
+.canvas__title {
+    font-size: 2em;
+    font-weight: bold;
+    color: rgb(187 198 209);
+    text-align: center;
+}
+
+.canvas__body {
+    display: block;
+    margin: auto;
+    background: #fff;
+    border-radius: 1.5em;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.canvas__body.cpu{
+    width: 19em;
+}
+
+.canvas__body.player{
+    width: 42em;
+}
+
+.controllers__button {
+    display: block;
+    width: 100%;
+    margin: 1em 0;
+    padding: .75em;
+    background: #7e00ff;
+    border-radius: 2em;
+    color: #fff;
+    font-size: 1.25em;
+    box-shadow: var(--shadow);
+}
+
+.controllers__button:hover {
+    opacity: .6;
+}
+
+.controllers__button[disabled] {
+    background: #aaa;
+}
