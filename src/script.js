@@ -86,8 +86,8 @@
 
         if (results.multiHandLandmarks) {
             results.multiHandLandmarks.forEach(marks => {
-                drawConnectors(ctx, marks, HAND_CONNECTIONS, { color: "#0f0" });
-                drawLandmarks(ctx, marks, { color: "#f00" });
+                drawConnectors(ctx, marks, HAND_CONNECTIONS, { color: "#fff", lineWidth: 5 });
+                drawLandmarks(ctx, marks, { color: "#7e00ff", lineWidth: 5 });
 
                 const calc = getTotalJointDeg(marks);
                 playerHand = detectPosture(calc);
