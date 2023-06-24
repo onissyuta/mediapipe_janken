@@ -235,7 +235,7 @@
             return new Promise(resolve => {
                 new Audio(result ? "src/audio/pon.mp3" : "src/audio/sho.mp3").play();
 
-                setTimeout(() => resolve(id), 400); // 手を出す時間を考慮してちょっと待つ
+                setTimeout(() => resolve(id), 600); // 手を出す時間を考慮してちょっと待つ
             })
         }).then(id => {
             return new Promise(resolve => {
