@@ -10,6 +10,18 @@ const playBtn = document.getElementById("start-game");
 const playx5Btn = document.getElementById("start-gamex5");
 
 
+const audio = [
+    [
+        new Audio("src/audio/janken.mp3"),
+        new Audio("src/audio/pon.mp3"),
+    ],
+    [
+        new Audio("src/audio/aikode.mp3"),
+        new Audio("src/audio/sho.mp3"),
+    ]
+]
+
+
 async function main() {
     // カメラの初期化
     const video = document.getElementById("video");
@@ -215,7 +227,7 @@ function fetchJankenGame(result) { // result: falseであいこモード
         divResult.textContent = "";
         divResult.dataset.result = "";
 
-        new Audio(result ? "src/audio/janken.mp3" : "src/audio/aikode.mp3").play();
+        audio[result ? 0 : 1][0].play();
 
         let count = 0;
         const id = setInterval(() => {
@@ -231,7 +243,7 @@ function fetchJankenGame(result) { // result: falseであいこモード
 
     }).then(id => {
         return new Promise(resolve => {
-            new Audio(result ? "src/audio/pon.mp3" : "src/audio/sho.mp3").play();
+            audio[result ? 0 : 1][1].play();
 
             setTimeout(() => resolve(id), 600); // 手を出す時間を考慮してちょっと待つ
         })
