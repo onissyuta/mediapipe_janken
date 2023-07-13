@@ -1,17 +1,25 @@
 document.addEventListener("DOMContentLoaded", main, false);
 
-
 let playerHand;
-let flag = false;
+let isPlaying = false;
+let tick = 0;
+
+const playerCanvas = document.getElementById("player-canvas");
+const playerCtx = playerCanvas.getContext("2d");
+
+const cpuCanvas = document.getElementById("cpu-canvas");
+const cpuCtx = cpuCanvas.getContext("2d");
 
 const meter = document.getElementById("meter");
+const divResult = document.getElementById("result");
+
 
 const audio = [
     [new Audio("src/audio/janken.mp3"), new Audio("src/audio/pon.mp3")],
     [new Audio("src/audio/aikode.mp3"), new Audio("src/audio/sho.mp3")]
 ]
 
-let images = [
+const images = [
     loadImage("src/img/hand/0.png"),
     loadImage("src/img/hand/1.png"),
     loadImage("src/img/hand/2.png"),
@@ -28,7 +36,6 @@ async function main() {
         width: 672,
         height: 504
     });
-    console.log(camera);
     camera.start()
 
 
@@ -48,41 +55,36 @@ async function main() {
 }
 
 
-let tick = 0;
-
 function recvResults(results) {
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d");
+    playerCtx.clearRect(0, 0, playerCanvas.width, playerCanvas.height);
+    playerCtx.drawImage(results.image, 0, 0, playerCanvas.width, playerCanvas.height);
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(results.image, 0, 0, canvas.width, canvas.height);
+    playerCtx.rect(0, 0, playerCanvas.width, 48);
+    playerCtx.fillStyle = "rgba(0, 0, 0, .5)";
+    playerCtx.fill();
 
-    ctx.rect(0, 0, canvas.width, 48);
-    ctx.fillStyle = "rgba(0, 0, 0, .5)";
-    ctx.fill();
-
-    ctx.font = "16px sans-serif"; 
-    ctx.fillStyle = "White";
-    ctx.fillText("現在の手:", 24, 30);
-    ctx.fillText("関節の角度の合計:" , canvas.width - 200, 30);
+    playerCtx.font = "16px sans-serif"; 
+    playerCtx.fillStyle = "White";
+    playerCtx.fillText("現在の手:", 24, 30);
+    playerCtx.fillText("関節の角度の合計:" , playerCanvas.width - 200, 30);
 
 
     playerHand = null;
 
     if (results.multiHandLandmarks) {
         results.multiHandLandmarks.forEach(marks => {
-            drawConnectors(ctx, marks, HAND_CONNECTIONS, { color: "#fff", lineWidth: 5 });
-            drawLandmarks(ctx, marks, { color: "#7e00ff", lineWidth: 5 });
+            drawConnectors(playerCtx, marks, HAND_CONNECTIONS, { color: "#fff", lineWidth: 5 });
+            drawLandmarks(playerCtx, marks, { color: "#7e00ff", lineWidth: 5 });
 
             const calc = getTotalJointDeg(marks);
             playerHand = detectPosture(calc);
 
-            ctx.fillText(playerHand.name, 102  , 30);
-            ctx.fillText(Math.floor(calc), canvas.width - 60, 30); 
+            playerCtx.fillText(playerHand.name, 102  , 30);
+            playerCtx.fillText(Math.floor(calc), playerCanvas.width - 60, 30); 
         })
     }
 
-    if(playerHand != null && flag == false && playerHand.id == 0){
+    if(playerHand != null && isPlaying == false && playerHand.id == 0){
         tick++;
     } else {
         tick = 0;
@@ -185,8 +187,8 @@ function Hand(id) {
 
 
 async function playJanken(num) {
-    if (!flag) { // 多重起動防止
-        flag = true;
+    if (!isPlaying) { // 多重起動防止
+        isPlaying = true;
 
         let result = 1;
         for (let i = 0; i < num; i++) {
@@ -195,16 +197,12 @@ async function playJanken(num) {
             } while (!result); // あいこじゃ なくなるまで
         }
 
-        flag = false;
+        isPlaying = false;
     }
 }
 
 
 function fetchJankenGame(result) { // result: falseであいこモード
-    const canvas = document.getElementById("cpu-canvas");
-    const ctx = canvas.getContext("2d");
-    const divResult = document.getElementById("result");
-
     return new Promise(resolve => {
         divResult.textContent = "";
         divResult.dataset.result = "";
@@ -214,8 +212,8 @@ function fetchJankenGame(result) { // result: falseであいこモード
         // ルーレット
         let count = 0;
         const id = setInterval(() => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(images[count], 0, 0, 1000, 1000, 0, 0, canvas.width, canvas.height);
+            cpuCtx.clearRect(0, 0, cpuCanvas.width, cpuCanvas.height);
+            cpuCtx.drawImage(images[count], 0, 0, 1000, 1000, 0, 0, cpuCanvas.width, cpuCanvas.height);
             if (++count > 2) count = 0;
         }, 100);
 
@@ -239,9 +237,9 @@ function fetchJankenGame(result) { // result: falseであいこモード
             // CPUの手を決定
             const cpuHand = new Hand(Math.floor(Math.random() * 3));
             
-            // canvasにCPUの手を描画
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(images[cpuHand.id], 0, 0, 1000, 1000, 0, 0, canvas.width, canvas.height);
+            // cpuCanvasにCPUの手を描画
+            cpuCtx.clearRect(0, 0, cpuCanvas.width, cpuCanvas.height);
+            cpuCtx.drawImage(images[cpuHand.id], 0, 0, 1000, 1000, 0, 0, cpuCanvas.width, cpuCanvas.height);
 
             // じゃんけんの勝敗を判定
             const result = judgeJanken(playerHand, cpuHand);
