@@ -26,19 +26,33 @@ const images = [
 ];
 
 
-async function main() {
-    // カメラの初期化
-    const video = document.getElementById("video");
-    const camera = new Camera(video, {
-        onFrame: async () => {
-            await hands.send({ image: video });
-        },
-        width: 672,
-        height: 504
+const video = document.getElementById('video');
+const button = document.getElementById('button');
+const select = document.getElementById('select');
+
+
+
+function getDevices(mediaDevices) {
+    select.innerHTML = '';
+    select.appendChild(document.createElement('option'));
+    let count = 1;
+    mediaDevices.forEach(mediaDevice => {
+    if (mediaDevice.kind === 'videoinput') {
+        const option = document.createElement('option');
+        option.value = mediaDevice.deviceId;
+        const label = mediaDevice.label || `Camera ${count++}`;
+        const textNode = document.createTextNode(label);
+        option.appendChild(textNode);
+        select.appendChild(option);
+    }
     });
-    camera.start()
+}
+navigator.mediaDevices.enumerateDevices().then(getDevices);
 
 
+
+
+async function main() {
     // handsの初期化
     const hands = new Hands({
         locateFile: file => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
@@ -51,7 +65,36 @@ async function main() {
         minTrackingConfidence: 0.5
     });
 
+
+    // カメラの初期化
+    button.addEventListener('click', async () => {
+        console.log(select.value)
+    
+        const media = await navigator.mediaDevices.getUserMedia({
+            video: true,
+            video: {
+                deviceId: select.value,
+            },
+            audio: false,
+            }).then(function(stream) {
+            video.srcObject = stream;
+            video.play();
+        });
+  
+        update()
+    });
+
+
+
+    async function update() {
+        await hands.send({image: video})
+        requestAnimationFrame(update);
+    }
+
     hands.onResults(recvResults);
+
+    const devices = (await navigator.mediaDevices.enumerateDevices()).filter((device) => device.kind === 'videoinput');
+    console.log(devices);
 }
 
 
