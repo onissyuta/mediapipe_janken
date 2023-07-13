@@ -1,12 +1,10 @@
 document.addEventListener("DOMContentLoaded", main, false);
 
 
-let playerHand = new Hand(0);
+let playerHand;
 let flag = false;
 
-// プレイボタン
-const playBtn = document.getElementById("start-game");
-const playx5Btn = document.getElementById("start-gamex5");
+const meter = document.getElementById("meter");
 
 const audio = [
     [new Audio("src/audio/janken.mp3"), new Audio("src/audio/pon.mp3")],
@@ -47,25 +45,10 @@ async function main() {
     });
 
     hands.onResults(recvResults);
-
-
-    playBtn.addEventListener("click", () => playJanken(1));
-    playx5Btn.addEventListener("click", () => playJanken(5));
-
-    document.addEventListener("keydown", event => {
-        if (event.code === "Space") {
-            playJanken(1);
-        }
-    });
-
-    document.addEventListener("keydown", event => {
-        if (event.code === "Enter") {
-            playJanken(5);
-        }
-    });
 }
 
 
+let tick = 0;
 
 function recvResults(results) {
     const canvas = document.getElementById("canvas");
@@ -84,6 +67,8 @@ function recvResults(results) {
     ctx.fillText("関節の角度の合計:" , canvas.width - 200, 30);
 
 
+    playerHand = null;
+
     if (results.multiHandLandmarks) {
         results.multiHandLandmarks.forEach(marks => {
             drawConnectors(ctx, marks, HAND_CONNECTIONS, { color: "#fff", lineWidth: 5 });
@@ -93,10 +78,22 @@ function recvResults(results) {
             playerHand = detectPosture(calc);
 
             ctx.fillText(playerHand.name, 102  , 30);
-            ctx.fillText(Math.floor(calc), canvas.width - 60, 30);  
+            ctx.fillText(Math.floor(calc), canvas.width - 60, 30); 
         })
     }
 
+    if(playerHand != null && flag == false && playerHand.id == 0){
+        tick++;
+    } else {
+        tick = 0;
+    }
+
+    if(tick > 50){
+        tick = 0;
+        playJanken(1);
+    }
+
+    meter.value = tick;
 }
 
 function getTotalJointDeg(marks) {
@@ -191,9 +188,6 @@ async function playJanken(num) {
     if (!flag) { // 多重起動防止
         flag = true;
 
-        playBtn.setAttribute("disabled", "true");
-        playx5Btn.setAttribute("disabled", "true");
-
         let result = 1;
         for (let i = 0; i < num; i++) {
             do {
@@ -202,8 +196,6 @@ async function playJanken(num) {
         }
 
         flag = false;
-        playBtn.removeAttribute("disabled");
-        playx5Btn.removeAttribute("disabled");
     }
 }
 
@@ -237,7 +229,7 @@ function fetchJankenGame(result) { // result: falseであいこモード
             audio[result ? 0 : 1][1].play();
 
             // 手を出す時間を考慮してちょっと待つ
-            setTimeout(() => resolve(id), 600);
+            setTimeout(() => resolve(id), 500);
         })
     }).then(id => {
         return new Promise(resolve => {

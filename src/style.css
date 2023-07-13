@@ -75,22 +75,16 @@ body {
     width: 42em;
 }
 
-.controller__button {
-    display: block;
+
+
+
+.controller__meter {
     width: 100%;
-    margin: 1em 0;
-    padding: .75em;
-    background: #7e00ff;
-    border-radius: 2em;
-    color: #fff;
-    font-size: 1.25em;
-    box-shadow: var(--shadow);
+    height: 3em;
 }
 
-.controller__button:hover {
-    opacity: .6;
-}
-
-.controller__button[disabled] {
-    background: #aaa;
+.controller__desc {
+    margin: .5em 0;
+    font-weight: bold;
+    text-align: center;
 }
