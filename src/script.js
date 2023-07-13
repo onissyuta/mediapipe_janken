@@ -1,25 +1,23 @@
 document.addEventListener("DOMContentLoaded", main, false);
 
-// グローバル変数
+
 let playerHand = new Hand(0);
 let flag = false;
-let images;
 
 // プレイボタン
 const playBtn = document.getElementById("start-game");
 const playx5Btn = document.getElementById("start-gamex5");
 
-
 const audio = [
-    [
-        new Audio("src/audio/janken.mp3"),
-        new Audio("src/audio/pon.mp3"),
-    ],
-    [
-        new Audio("src/audio/aikode.mp3"),
-        new Audio("src/audio/sho.mp3"),
-    ]
+    [new Audio("src/audio/janken.mp3"), new Audio("src/audio/pon.mp3")],
+    [new Audio("src/audio/aikode.mp3"), new Audio("src/audio/sho.mp3")]
 ]
+
+let images = [
+    loadImage("src/img/hand/0.png"),
+    loadImage("src/img/hand/1.png"),
+    loadImage("src/img/hand/2.png"),
+];
 
 
 async function main() {
@@ -50,14 +48,6 @@ async function main() {
 
     hands.onResults(recvResults);
 
-
-
-    
-    images = [
-        await loadImage("src/img/hand/0.png"),
-        await loadImage("src/img/hand/1.png"),
-        await loadImage("src/img/hand/2.png"),
-    ];
 
     playBtn.addEventListener("click", () => playJanken(1));
     playx5Btn.addEventListener("click", () => playJanken(5));
@@ -162,7 +152,7 @@ function vecDeg(A, B) {
 }
 
 
-// handA.idがhandBに0:引き分け 1:負け 2:勝ち
+// handAがhandBに (返り値) 0:引き分け 1:負け 2:勝ち
 function judgeJanken(handA, handB) {
     if (handA == null) return 1;
 
@@ -229,6 +219,7 @@ function fetchJankenGame(result) { // result: falseであいこモード
 
         audio[result ? 0 : 1][0].play();
 
+        // ルーレット
         let count = 0;
         const id = setInterval(() => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -236,32 +227,39 @@ function fetchJankenGame(result) { // result: falseであいこモード
             if (++count > 2) count = 0;
         }, 100);
 
+
         setTimeout(() => {
             resolve(id);
         }, 1300);
-
 
     }).then(id => {
         return new Promise(resolve => {
             audio[result ? 0 : 1][1].play();
 
-            setTimeout(() => resolve(id), 600); // 手を出す時間を考慮してちょっと待つ
+            // 手を出す時間を考慮してちょっと待つ
+            setTimeout(() => resolve(id), 600);
         })
     }).then(id => {
         return new Promise(resolve => {
-            clearInterval(id); // ルーレット止める
+            // ルーレット止める
+            clearInterval(id);
 
+            // CPUの手を決定
             const cpuHand = new Hand(Math.floor(Math.random() * 3));
-
+            
+            // canvasにCPUの手を描画
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(images[cpuHand.id], 0, 0, 1000, 1000, 0, 0, canvas.width, canvas.height);
 
+            // じゃんけんの勝敗を判定
             const result = judgeJanken(playerHand, cpuHand);
-
+            
+            // 勝敗を描画
             const resultName = ["引き分け", "負け", "勝ち"];
             divResult.dataset.result = result;
             divResult.textContent = resultName[result];
 
+            // 1秒待って終了
             setTimeout(() => resolve(result), 1000);
         })
     });
@@ -269,10 +267,7 @@ function fetchJankenGame(result) { // result: falseであいこモード
 
 
 function loadImage(src) {
-    return new Promise((resolve, reject) => {
-        const imageIns = new Image();
-        imageIns.src = src;
-        imageIns.onload = () => resolve(imageIns);
-        imageIns.onerror = () => reject();
-    })
-};
+    const imageIns = new Image();
+    imageIns.src = src;
+    return imageIns;
+}
