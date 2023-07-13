@@ -10,25 +10,25 @@
 </head>
 <body>
     <div class="frame">
-        <main class="main">
+        <div>
             <h1 class="title">カメラに手をかざして<br>じゃんけん！</h1>
             <div class="canvas">
                 <div class="canvas__title">CPU</div>
                 <canvas class="canvas__body cpu" id="cpu-canvas" width="304" height="304"></canvas>
             </div>
-            <div class="controllers">
-                <button class="controllers__button" id="start-game" >じゃんけんする [Space]</button>
-                <button class="controllers__button" id="start-gamex5" >じゃんけん5回勝負 [Enter]</button>    
+            <div class="controller">
+                <button class="controller__button" id="start-game">じゃんけんする [Space]</button>
+                <button class="controller__button" id="start-gamex5">じゃんけん5回勝負 [Enter]</button>
             </div>
-            </main>
-        <aside class="aside">
+        </div>
+        <div>
             <div class="canvas">
                 <div class="canvas__title">Player</div>
                 <video id="video" hidden></video>
                 <canvas class="canvas__body player" id="canvas" width="672" height="504"></canvas>
             </div>
-            <div class="result" id="result" ></div>
-        </aside>
+            <div class="result" id="result"></div>
+        </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>

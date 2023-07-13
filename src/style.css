@@ -75,7 +75,7 @@ body {
     width: 42em;
 }
 
-.controllers__button {
+.controller__button {
     display: block;
     width: 100%;
     margin: 1em 0;
@@ -87,10 +87,10 @@ body {
     box-shadow: var(--shadow);
 }
 
-.controllers__button:hover {
+.controller__button:hover {
     opacity: .6;
 }
 
-.controllers__button[disabled] {
+.controller__button[disabled] {
     background: #aaa;
 }
