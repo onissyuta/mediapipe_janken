@@ -49,42 +49,61 @@ async function main() {
     dialog.showModal();
 
 
-    navigator.mediaDevices.enumerateDevices().then(mediaDevices => {
-        console.log(mediaDevices);
-        select.innerHTML = '';
-        select.appendChild(document.createElement('option'));
-        let count = 1;
-        mediaDevices.forEach(mediaDevice => {
-        if (mediaDevice.kind === 'videoinput') {
-            const option = document.createElement('option');
-            option.value = mediaDevice.deviceId;
-            const textNode = document.createTextNode(mediaDevice.label || `Camera ${count++}`);
-            option.appendChild(textNode);
-            select.appendChild(option);
-        }
+    // カメラの一覧を取得
+    await navigator.mediaDevices.getUserMedia({video: true, audio: false}) // 権限要求のため一度カメラをオンにする
+    .then(stream => {
+        // カメラ停止
+        stream.getTracks().forEach(track => {
+            track.stop();
+        })
+    })
+    .catch(error => console.log(error)) // Chromeのバグ対策
+    .finally(() => {
+        // 入出力デバイスの取得
+        navigator.mediaDevices.enumerateDevices().then(mediaDevices => {
+            console.log(mediaDevices);
+            select.innerHTML = '';
+            select.appendChild(document.createElement('option'));
+            let count = 1;
+            mediaDevices.forEach(mediaDevice => {
+                if (mediaDevice.kind === 'videoinput') {
+                    const option = document.createElement('option');
+                    option.value = mediaDevice.deviceId;
+                    const textNode = document.createTextNode(mediaDevice.label || `Camera ${count++}`);
+                    option.appendChild(textNode);
+                    select.appendChild(option);
+                }
+            });
         });
-    });
+   });
 
 
-    // カメラの初期化
+    // カメラの起動
     document.getElementById('startBtn').addEventListener('click', async () => {
         dialog.close();
+        console.log(select.value)
     
-        const media = await navigator.mediaDevices.getUserMedia({
-                video: true,
-                video: {
-                    deviceId: select.value,
-                    width: 736,
-                    height: 552
-                },
-                audio: false,
-            })
-            .then(function(stream) {
+        await navigator.mediaDevices.getUserMedia({
+            video: {
+                deviceId: select.value,
+                width: 768,
+                height: 576
+            },
+            audio: false,
+        })
+        .then(
+            stream => {
                 video.srcObject = stream;
                 video.play();
+            },
+            error => {
+                alert('カメラを起動できませんでした。他のアプリでカメラを使用していないか確認してください。');
+                console.log(error);
             }
-        );
-        sendHandsImage()
+        )
+        .then(() => {
+            sendHandsImage();
+        })
     });
 
 
