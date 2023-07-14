@@ -15,8 +15,8 @@ const divResult = document.getElementById("result");
 
 
 const audio = [
-    [new Audio("src/audio/janken.mp3"), new Audio("src/audio/pon.mp3")],
-    [new Audio("src/audio/aikode.mp3"), new Audio("src/audio/sho.mp3")]
+    [loadAudio("src/audio/janken.mp3"), loadAudio("src/audio/pon.mp3")],
+    [loadAudio("src/audio/aikode.mp3"), loadAudio("src/audio/sho.mp3")]
 ]
 
 const images = [
@@ -318,4 +318,12 @@ function loadImage(src) {
     const imageIns = new Image();
     imageIns.src = src;
     return imageIns;
+}
+
+
+function loadAudio(src) {
+    const audioIns = new Audio();
+    audioIns.src = src;
+    audioIns.load();
+    return audioIns;
 }
