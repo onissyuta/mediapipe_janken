@@ -30,8 +30,13 @@
             <div class="result" id="result"></div>
         </div>
     </div>
-    <select id="select"></select>
-    <button id="button">カメラを起動する</button>
+    <dialog id="dialog">
+        <h2>設定</h2>
+        <p>1. カメラへのアクセスを許可する</p>
+        <p>2. 使用するカメラを選択 <br>（※カメラが全て認識されない場合はアクセスを許可した後に一度リロードしてください）</p>
+        <p><select id="camera-devices"></select></p>
+        <p><button id="startBtn" type="button">はじめる</button></p>
+    </dialog>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>

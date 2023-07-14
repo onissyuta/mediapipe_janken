@@ -26,28 +26,9 @@ const images = [
 ];
 
 
-const video = document.getElementById('video');
-const button = document.getElementById('button');
-const select = document.getElementById('select');
 
 
-
-function getDevices(mediaDevices) {
-    select.innerHTML = '';
-    select.appendChild(document.createElement('option'));
-    let count = 1;
-    mediaDevices.forEach(mediaDevice => {
-    if (mediaDevice.kind === 'videoinput') {
-        const option = document.createElement('option');
-        option.value = mediaDevice.deviceId;
-        const label = mediaDevice.label || `Camera ${count++}`;
-        const textNode = document.createTextNode(label);
-        option.appendChild(textNode);
-        select.appendChild(option);
-    }
-    });
-}
-navigator.mediaDevices.enumerateDevices().then(getDevices);
+dialog.showModal();
 
 
 
@@ -64,37 +45,62 @@ async function main() {
         minDetectionConfidence: 0.5,
         minTrackingConfidence: 0.5
     });
+    hands.onResults(recvResults);
+    
+
+
+        
+    const video = document.getElementById('video');
+
+    const dialog = document.getElementById('dialog');
+    const select = document.getElementById('camera-devices');
+    const button = document.getElementById('startBtn');
+
+
+
+    navigator.mediaDevices.enumerateDevices().then(mediaDevices => {
+        select.innerHTML = '';
+        select.appendChild(document.createElement('option'));
+        let count = 1;
+        mediaDevices.forEach(mediaDevice => {
+        if (mediaDevice.kind === 'videoinput') {
+            const option = document.createElement('option');
+            option.value = mediaDevice.deviceId;
+            const textNode = document.createTextNode(mediaDevice.label || `Camera ${count++}`);
+            option.appendChild(textNode);
+            select.appendChild(option);
+        }
+        });
+    });
 
 
     // カメラの初期化
     button.addEventListener('click', async () => {
+        dialog.close();
         console.log(select.value)
     
         const media = await navigator.mediaDevices.getUserMedia({
-            video: true,
-            video: {
-                deviceId: select.value,
-            },
-            audio: false,
-            }).then(function(stream) {
-            video.srcObject = stream;
-            video.play();
-        });
-  
+                video: true,
+                video: {
+                    deviceId: select.value,
+                },
+                audio: false,
+            })
+            .then(function(stream) {
+                video.srcObject = stream;
+                video.play();
+            }
+        );
         update()
     });
 
 
-
-    async function update() {
+    const update = async () => {
         await hands.send({image: video})
         requestAnimationFrame(update);
     }
 
-    hands.onResults(recvResults);
 
-    const devices = (await navigator.mediaDevices.enumerateDevices()).filter((device) => device.kind === 'videoinput');
-    console.log(devices);
 }
 
 
