@@ -72,16 +72,6 @@ p {
     box-shadow: var(--shadow);
 }
 
-.canvas__body.cpu{
-    width: 19em;
-}
-
-.canvas__body.player{
-    width: 42em;
-}
-
-
-
 
 .controller__meter {
     width: 100%;
@@ -90,6 +80,7 @@ p {
 
 .controller__desc {
     margin: .5em 0;
+    font-size: 1.2em;
     font-weight: bold;
     text-align: center;
 }

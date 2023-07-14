@@ -74,8 +74,8 @@ async function main() {
                 video: true,
                 video: {
                     deviceId: select.value,
-                    width: 672,
-                    height: 504
+                    width: 736,
+                    height: 552
                 },
                 audio: false,
             })
