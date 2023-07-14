@@ -265,6 +265,8 @@ function fetchJankenGame(result) { // result: falseであいこモード
         divResult.textContent = "";
         divResult.dataset.result = "";
 
+        audio[result ? 0 : 1][0].currentTime = 0;
+        console.log(audio[result ? 0 : 1][0].currentTime);
         audio[result ? 0 : 1][0].play();
 
         // ルーレット
@@ -282,6 +284,8 @@ function fetchJankenGame(result) { // result: falseであいこモード
 
     }).then(id => {
         return new Promise(resolve => {
+            audio[result ? 0 : 1][1].currentTime = 0;
+            console.log(audio[result ? 0 : 1][1].currentTime);
             audio[result ? 0 : 1][1].play();
 
             // 手を出す時間を考慮してちょっと待つ
