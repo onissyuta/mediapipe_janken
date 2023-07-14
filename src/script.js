@@ -27,12 +27,6 @@ const images = [
 
 
 
-
-dialog.showModal();
-
-
-
-
 async function main() {
     // handsの初期化
     const hands = new Hands({
@@ -48,17 +42,15 @@ async function main() {
     hands.onResults(recvResults);
     
 
-
-        
     const video = document.getElementById('video');
-
     const dialog = document.getElementById('dialog');
     const select = document.getElementById('camera-devices');
-    const button = document.getElementById('startBtn');
 
+    dialog.showModal();
 
 
     navigator.mediaDevices.enumerateDevices().then(mediaDevices => {
+        console.log(mediaDevices);
         select.innerHTML = '';
         select.appendChild(document.createElement('option'));
         let count = 1;
@@ -75,14 +67,15 @@ async function main() {
 
 
     // カメラの初期化
-    button.addEventListener('click', async () => {
+    document.getElementById('startBtn').addEventListener('click', async () => {
         dialog.close();
-        console.log(select.value)
     
         const media = await navigator.mediaDevices.getUserMedia({
                 video: true,
                 video: {
                     deviceId: select.value,
+                    width: 672,
+                    height: 504
                 },
                 audio: false,
             })
@@ -91,13 +84,13 @@ async function main() {
                 video.play();
             }
         );
-        update()
+        sendHandsImage()
     });
 
 
-    const update = async () => {
+    const sendHandsImage = async () => {
         await hands.send({image: video})
-        requestAnimationFrame(update);
+        requestAnimationFrame(sendHandsImage);
     }
 
 

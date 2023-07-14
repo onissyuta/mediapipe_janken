@@ -113,12 +113,14 @@ select {
     -moz-appearance: menulist-button;
     -webkit-appearance: menulist-button;
     appearance: menulist-button;
+    min-width: 20em;
     padding: .5em;
     border: 1px solid #aaa;
 }
 
 
 button {
+    margin: 1em 0 0 0;
     background: #7e00ff;
     color: #fff!important;
     padding: .5em 2em;
