@@ -132,7 +132,7 @@ function recvResults(results) {
     if (results.multiHandLandmarks) {
         results.multiHandLandmarks.forEach(marks => {
             drawConnectors(playerCtx, marks, HAND_CONNECTIONS, { color: "#fff", lineWidth: 5 });
-            drawLandmarks(playerCtx, marks, { color: "#7e00ff", lineWidth: 5 });
+            drawLandmarks(playerCtx, marks, { color: "#ff79c6", lineWidth: 5 });
 
             const calc = getTotalJointDeg(marks);
             playerHand = detectPosture(calc);
@@ -148,7 +148,7 @@ function recvResults(results) {
         tick = 0;
     }
 
-    if(tick > 100){
+    if(tick > 75){
         tick = 0;
         playJanken(1);
     }
