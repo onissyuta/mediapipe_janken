@@ -15,8 +15,8 @@ const divResult = document.getElementById("result");
 
 
 const audio = [
-    [loadAudio("src/audio/janken.mp3"), loadAudio("src/audio/pon.mp3")],
-    [loadAudio("src/audio/aikode.mp3"), loadAudio("src/audio/sho.mp3")]
+    [loadAudio("src/audio/janken.wav"), loadAudio("src/audio/pon.wav")],
+    [loadAudio("src/audio/aikode.wav"), loadAudio("src/audio/sho.wav")]
 ]
 
 const images = [
@@ -277,7 +277,7 @@ function fetchJankenGame(result) { // result: falseであいこモード
         }, 100);
 
         audio[result ? 0 : 1][0].addEventListener('ended', () => {
-            setTimeout(() => resolve(id), 100);
+            resolve(id);
         });
     })
     .then(id => {
@@ -286,7 +286,7 @@ function fetchJankenGame(result) { // result: falseであいこモード
             audio[result ? 0 : 1][1].play();
 
             // 手を出す時間を考慮してちょっと待つ
-            setTimeout(() => resolve(id), 500);
+            setTimeout(() => resolve(id), 400);
         })
     })
     .then(id => {
