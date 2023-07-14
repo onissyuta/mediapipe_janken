@@ -50,20 +50,16 @@ async function main() {
 
 
     // カメラの一覧を取得
-    await navigator.mediaDevices.getUserMedia({video: true, audio: false}) // 権限要求のため一度カメラをオンにする
+    await navigator.mediaDevices.getUserMedia({video: true, audio: false}) // 権限要求のため一瞬カメラをオンにする
     .then(stream => {
         // カメラ停止
         stream.getTracks().forEach(track => {
             track.stop();
         })
-    })
-    .catch(error => console.log(error)) // Chromeのバグ対策
-    .finally(() => {
+
         // 入出力デバイスの取得
         navigator.mediaDevices.enumerateDevices().then(mediaDevices => {
             console.log(mediaDevices);
-            select.innerHTML = '';
-            select.appendChild(document.createElement('option'));
             let count = 1;
             mediaDevices.forEach(mediaDevice => {
                 if (mediaDevice.kind === 'videoinput') {
@@ -75,7 +71,8 @@ async function main() {
                 }
             });
         });
-   });
+    })
+    .catch(error => alert("エラーが発生しました:\n・カメラアクセスが許可されていません\n・他のアプリでカメラが使用されています"));
 
 
     // カメラの起動
@@ -97,7 +94,7 @@ async function main() {
                 video.play();
             },
             error => {
-                alert('カメラを起動できませんでした。他のアプリでカメラを使用していないか確認してください。');
+                alert("エラーが発生しました:\n他のアプリでカメラが使用されています");
                 console.log(error);
             }
         )
@@ -151,7 +148,7 @@ function recvResults(results) {
         tick = 0;
     }
 
-    if(tick > 50){
+    if(tick > 100){
         tick = 0;
         playJanken(1);
     }
