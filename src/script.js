@@ -40,7 +40,7 @@ async function main() {
         minTrackingConfidence: 0.5
     });
     hands.onResults(recvResults);
-    
+
 
     const video = document.getElementById('video');
     const dialog = document.getElementById('dialog');
@@ -50,36 +50,36 @@ async function main() {
 
 
     // カメラの一覧を取得
-    await navigator.mediaDevices.getUserMedia({video: true, audio: false}) // 権限要求のため一瞬カメラをオンにする
-    .then(stream => {
-        // カメラ停止
-        stream.getTracks().forEach(track => {
-            track.stop();
-        })
+    await navigator.mediaDevices.getUserMedia({ video: true, audio: false }) // 権限要求のため一瞬カメラをオンにする
+        .then(stream => {
+            // カメラ停止
+            stream.getTracks().forEach(track => {
+                track.stop();
+            })
 
-        // 入出力デバイスの取得
-        navigator.mediaDevices.enumerateDevices().then(mediaDevices => {
-            console.log(mediaDevices);
-            let count = 1;
-            mediaDevices.forEach(mediaDevice => {
-                if (mediaDevice.kind === 'videoinput') {
-                    const option = document.createElement('option');
-                    option.value = mediaDevice.deviceId;
-                    const textNode = document.createTextNode(mediaDevice.label || `Camera ${count++}`);
-                    option.appendChild(textNode);
-                    select.appendChild(option);
-                }
+            // 入出力デバイスの取得
+            navigator.mediaDevices.enumerateDevices().then(mediaDevices => {
+                console.log(mediaDevices);
+                let count = 1;
+                mediaDevices.forEach(mediaDevice => {
+                    if (mediaDevice.kind === 'videoinput') {
+                        const option = document.createElement('option');
+                        option.value = mediaDevice.deviceId;
+                        const textNode = document.createTextNode(mediaDevice.label || `Camera ${count++}`);
+                        option.appendChild(textNode);
+                        select.appendChild(option);
+                    }
+                });
             });
-        });
-    })
-    .catch(error => alert("エラーが発生しました:\n・カメラアクセスが許可されていません\n・他のアプリでカメラが使用されています"));
+        })
+        .catch(error => alert("エラーが発生しました:\n・カメラアクセスが許可されていません\n・他のアプリでカメラが使用されています"));
 
 
     // カメラの起動
     document.getElementById('startBtn').addEventListener('click', async () => {
         dialog.close();
         console.log(select.value)
-    
+
         await navigator.mediaDevices.getUserMedia({
             video: {
                 deviceId: select.value,
@@ -88,24 +88,24 @@ async function main() {
             },
             audio: false,
         })
-        .then(
-            stream => {
-                video.srcObject = stream;
-                video.play();
-            },
-            error => {
-                alert("エラーが発生しました:\n他のアプリでカメラが使用されています");
-                console.log(error);
-            }
-        )
-        .then(() => {
-            sendHandsImage();
-        })
+            .then(
+                stream => {
+                    video.srcObject = stream;
+                    video.play();
+                },
+                error => {
+                    alert("エラーが発生しました:\n他のアプリでカメラが使用されています");
+                    console.log(error);
+                }
+            )
+            .then(() => {
+                sendHandsImage();
+            })
     });
 
 
     const sendHandsImage = async () => {
-        await hands.send({image: video})
+        await hands.send({ image: video })
         requestAnimationFrame(sendHandsImage);
     }
 
@@ -121,10 +121,10 @@ function recvResults(results) {
     playerCtx.fillStyle = "rgba(0, 0, 0, .5)";
     playerCtx.fill();
 
-    playerCtx.font = "16px sans-serif"; 
+    playerCtx.font = "16px sans-serif";
     playerCtx.fillStyle = "White";
     playerCtx.fillText("現在の手:", 24, 30);
-    playerCtx.fillText("関節の角度の合計:" , playerCanvas.width - 200, 30);
+    playerCtx.fillText("関節の角度の合計:", playerCanvas.width - 200, 30);
 
 
     playerHand = null;
@@ -137,18 +137,18 @@ function recvResults(results) {
             const calc = getTotalJointDeg(marks);
             playerHand = detectPosture(calc);
 
-            playerCtx.fillText(playerHand.name, 102  , 30);
-            playerCtx.fillText(Math.floor(calc), playerCanvas.width - 60, 30); 
+            playerCtx.fillText(playerHand.name, 102, 30);
+            playerCtx.fillText(Math.floor(calc), playerCanvas.width - 60, 30);
         })
     }
 
-    if(playerHand != null && isPlaying == false && playerHand.id == 0){
+    if (playerHand != null && isPlaying == false && playerHand.id == 0) {
         tick++;
     } else {
         tick = 0;
     }
 
-    if(tick > 75){
+    if (tick > 75) {
         tick = 0;
         playJanken(1);
     }
@@ -157,21 +157,21 @@ function recvResults(results) {
 }
 
 function getTotalJointDeg(marks) {
-    return vecDeg(vec(marks[1],marks[0]), vec(marks[1],marks[2]))
-        + vecDeg(vec(marks[2],marks[1]), vec(marks[2],marks[3]))
-        + vecDeg(vec(marks[3],marks[2]), vec(marks[3],marks[4]))
-        + vecDeg(vec(marks[5],marks[0]), vec(marks[5],marks[6]))
-        + vecDeg(vec(marks[6],marks[5]), vec(marks[6],marks[7]))
-        + vecDeg(vec(marks[7],marks[6]), vec(marks[7],marks[8]))
-        + vecDeg(vec(marks[9],marks[0]), vec(marks[9],marks[10]))
-        + vecDeg(vec(marks[10],marks[9]), vec(marks[10],marks[11]))
-        + vecDeg(vec(marks[11],marks[10]), vec(marks[11],marks[12]))
-        + vecDeg(vec(marks[13],marks[0]), vec(marks[13],marks[14]))
-        + vecDeg(vec(marks[14],marks[13]), vec(marks[14],marks[15]))
-        + vecDeg(vec(marks[15],marks[14]), vec(marks[15],marks[16]))
-        + vecDeg(vec(marks[17],marks[0]), vec(marks[17],marks[18]))
-        + vecDeg(vec(marks[18],marks[17]), vec(marks[18],marks[19]))
-        + vecDeg(vec(marks[19],marks[18]), vec(marks[19],marks[20]));
+    return vecDeg(vec(marks[1], marks[0]), vec(marks[1], marks[2]))
+        + vecDeg(vec(marks[2], marks[1]), vec(marks[2], marks[3]))
+        + vecDeg(vec(marks[3], marks[2]), vec(marks[3], marks[4]))
+        + vecDeg(vec(marks[5], marks[0]), vec(marks[5], marks[6]))
+        + vecDeg(vec(marks[6], marks[5]), vec(marks[6], marks[7]))
+        + vecDeg(vec(marks[7], marks[6]), vec(marks[7], marks[8]))
+        + vecDeg(vec(marks[9], marks[0]), vec(marks[9], marks[10]))
+        + vecDeg(vec(marks[10], marks[9]), vec(marks[10], marks[11]))
+        + vecDeg(vec(marks[11], marks[10]), vec(marks[11], marks[12]))
+        + vecDeg(vec(marks[13], marks[0]), vec(marks[13], marks[14]))
+        + vecDeg(vec(marks[14], marks[13]), vec(marks[14], marks[15]))
+        + vecDeg(vec(marks[15], marks[14]), vec(marks[15], marks[16]))
+        + vecDeg(vec(marks[17], marks[0]), vec(marks[17], marks[18]))
+        + vecDeg(vec(marks[18], marks[17]), vec(marks[18], marks[19]))
+        + vecDeg(vec(marks[19], marks[18]), vec(marks[19], marks[20]));
 }
 
 
@@ -280,39 +280,39 @@ function fetchJankenGame(result) { // result: falseであいこモード
             resolve(id);
         });
     })
-    .then(id => {
-        return new Promise(resolve => {
-            audio[result ? 0 : 1][1].currentTime = 0;
-            audio[result ? 0 : 1][1].play();
+        .then(id => {
+            return new Promise(resolve => {
+                audio[result ? 0 : 1][1].currentTime = 0;
+                audio[result ? 0 : 1][1].play();
 
-            // 手を出す時間を考慮してちょっと待つ
-            setTimeout(() => resolve(id), 400);
+                // 手を出す時間を考慮してちょっと待つ
+                setTimeout(() => resolve(id), 400);
+            })
         })
-    })
-    .then(id => {
-        return new Promise(resolve => {
-            // ルーレット止める
-            clearInterval(id);
+        .then(id => {
+            return new Promise(resolve => {
+                // ルーレット止める
+                clearInterval(id);
 
-            // CPUの手を決定
-            const cpuHand = new Hand(Math.floor(Math.random() * 3));
-            
-            // cpuCanvasにCPUの手を描画
-            cpuCtx.clearRect(0, 0, cpuCanvas.width, cpuCanvas.height);
-            cpuCtx.drawImage(images[cpuHand.id], 0, 0, 1000, 1000, 0, 0, cpuCanvas.width, cpuCanvas.height);
+                // CPUの手を決定
+                const cpuHand = new Hand(Math.floor(Math.random() * 3));
 
-            // じゃんけんの勝敗を判定
-            const result = judgeJanken(playerHand, cpuHand);
-            
-            // 勝敗を描画
-            const resultName = ["引き分け", "負け", "勝ち"];
-            divResult.dataset.result = result;
-            divResult.textContent = resultName[result];
+                // cpuCanvasにCPUの手を描画
+                cpuCtx.clearRect(0, 0, cpuCanvas.width, cpuCanvas.height);
+                cpuCtx.drawImage(images[cpuHand.id], 0, 0, 1000, 1000, 0, 0, cpuCanvas.width, cpuCanvas.height);
 
-            // 1秒待って終了
-            setTimeout(() => resolve(result), 1000);
-        })
-    });
+                // じゃんけんの勝敗を判定
+                const result = judgeJanken(playerHand, cpuHand);
+
+                // 勝敗を描画
+                const resultName = ["引き分け", "負け", "勝ち"];
+                divResult.dataset.result = result;
+                divResult.textContent = resultName[result];
+
+                // 1秒待って終了
+                setTimeout(() => resolve(result), 1000);
+            })
+        });
 }
 
 
