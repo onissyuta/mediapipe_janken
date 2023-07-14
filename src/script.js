@@ -276,12 +276,11 @@ function fetchJankenGame(result) { // result: falseであいこモード
             if (++count > 2) count = 0;
         }, 100);
 
-
-        setTimeout(() => {
-            resolve(id);
-        }, 1300);
-
-    }).then(id => {
+        audio[result ? 0 : 1][0].addEventListener('ended', () => {
+            setTimeout(() => resolve(id), 100);
+        });
+    })
+    .then(id => {
         return new Promise(resolve => {
             audio[result ? 0 : 1][1].currentTime = 0;
             audio[result ? 0 : 1][1].play();
@@ -289,7 +288,8 @@ function fetchJankenGame(result) { // result: falseであいこモード
             // 手を出す時間を考慮してちょっと待つ
             setTimeout(() => resolve(id), 500);
         })
-    }).then(id => {
+    })
+    .then(id => {
         return new Promise(resolve => {
             // ルーレット止める
             clearInterval(id);
